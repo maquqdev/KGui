@@ -1,0 +1,9 @@
+name: KGui-Example
+version: '${version}'
+main: club.skidware.kgui.example.ExamplePlugin
+api-version: '1.21'
+description: Example plugin demonstrating KGui library
+commands:
+  kgui:
+    description: Open KGui example menus
+    usage: /kgui <chest|paginated|scrollable|stateful|anvil|hopper|merchant|pattern|template>
