@@ -67,8 +67,8 @@ class GuiClickEvent(
 ) : Event(), Cancellable {
     private var cancelled = false
     override fun getHandlers(): HandlerList = handlerList
-    override fun isCancelled(): Boolean = cancelled
-    override fun setCancelled(cancel: Boolean) { cancelled = cancel }
+    override fun isCancelled(): Boolean = this.cancelled
+    override fun setCancelled(cancel: Boolean) { this.cancelled = cancel }
     companion object { @JvmStatic val handlerList = HandlerList() }
 }
 

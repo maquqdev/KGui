@@ -64,9 +64,9 @@ abstract class BaseGui(
      * @see GuiSlot
      */
     fun setSlot(slot: GuiSlot) {
-        slots[slot.index] = slot
+        this.slots[slot.index] = slot
         if (slot.animation != null) {
-            animatedSlots.add(slot.index)
+            this.animatedSlots.add(slot.index)
             startAnimationIfNeeded()
         }
     }
@@ -80,11 +80,11 @@ abstract class BaseGui(
      * @return true if the item can be taken by the player
      */
     override fun canTakeItem(rawSlot: Int): Boolean {
-        val slot = slots[rawSlot]
+        val slot = this.slots[rawSlot]
         // Per-slot takeable overrides GUI-level interactable
         slot?.takeable?.let { return it }
         // Fall back to GUI-level setting
-        return interactable
+        return this.interactable
     }
 
     /**
@@ -96,11 +96,11 @@ abstract class BaseGui(
      */
     override fun open(player: Player) {
         val inv = createInventory(player)
-        inventories[player.uniqueId] = inv
-        viewers.add(player.uniqueId)
+        this.inventories[player.uniqueId] = inv
+        this.viewers.add(player.uniqueId)
         renderFor(player, inv)
         player.openInventory(inv)
-        onOpenHandler?.invoke(player)
+        this.onOpenHandler?.invoke(player)
     }
 
     /**
@@ -112,15 +112,15 @@ abstract class BaseGui(
      * @param player the player leaving the GUI
      */
     override fun close(player: Player) {
-        viewers.remove(player.uniqueId)
-        inventories.remove(player.uniqueId)
-        onCloseHandler?.invoke(player)
+        this.viewers.remove(player.uniqueId)
+        this.inventories.remove(player.uniqueId)
+        this.onCloseHandler?.invoke(player)
         if (viewers.isEmpty()) stopAnimation()
     }
 
     /** Re-renders the GUI for every online viewer. */
     override fun update() {
-        viewers.mapNotNull { Bukkit.getPlayer(it) }.forEach { update(it) }
+        this.viewers.mapNotNull { Bukkit.getPlayer(it) }.forEach { update(it) }
     }
 
     /**
@@ -129,13 +129,13 @@ abstract class BaseGui(
      * @param player the player whose view should be refreshed
      */
     override fun update(player: Player) {
-        val inv = inventories[player.uniqueId] ?: return
+        val inv = this.inventories[player.uniqueId] ?: return
         renderFor(player, inv)
     }
 
     /** @return an immutable snapshot of all online players currently viewing this GUI */
     override fun getViewers(): Set<Player> =
-        viewers.mapNotNull { Bukkit.getPlayer(it) }.toSet()
+        this.viewers.mapNotNull { Bukkit.getPlayer(it) }.toSet()
 
     /**
      * Returns the player's inventory for this GUI, creating one if absent.
@@ -144,7 +144,7 @@ abstract class BaseGui(
      * @return the Bukkit inventory backing this GUI for the given player
      */
     override fun getInventory(player: Player): Inventory =
-        inventories[player.uniqueId] ?: createInventory(player)
+        this.inventories[player.uniqueId] ?: createInventory(player)
 
     /**
      * Required by [InventoryHolder]. Returns a fresh inventory instance
@@ -174,8 +174,8 @@ abstract class BaseGui(
      * @param inventory the Bukkit inventory to populate
      */
     protected open fun renderFor(player: Player, inventory: Inventory) {
-        for (i in 0 until size) {
-            val slot = slots[i]
+        for (i in 0 until this.size) {
+            val slot = this.slots[i]
             if (slot != null) {
                 inventory.setItem(i, slot.getItemFor(player))
             }
@@ -193,8 +193,8 @@ abstract class BaseGui(
      */
     internal fun handleClick(player: Player, rawSlot: Int, clickType: ClickType) {
         if (rawSlot < 0 || rawSlot >= size) return
-        val slot = slots[rawSlot]
-        onClickHandler?.invoke(player, rawSlot, clickType)
+        val slot = this.slots[rawSlot]
+        this.onClickHandler?.invoke(player, rawSlot, clickType)
         slot?.let {
             it.sound?.let { sound -> player.playSound(player.location, sound, 1f, 1f) }
             it.onClick?.invoke(player, clickType)
@@ -208,26 +208,26 @@ abstract class BaseGui(
      * @return true if the player is viewing this GUI
      */
     internal fun isViewer(player: Player): Boolean =
-        viewers.contains(player.uniqueId)
+        this.viewers.contains(player.uniqueId)
 
     private fun startAnimationIfNeeded() {
-        if (animationTask != null || animatedSlots.isEmpty()) return
+        if (this.animationTask != null || this.animatedSlots.isEmpty()) return
         val interval = slots.values
             .mapNotNull { it.animation?.intervalTicks }
             .minOrNull() ?: 20L
-        animationTask = Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
-            for (slotIndex in animatedSlots) {
-                val slot = slots[slotIndex] ?: continue
+        this.animationTask = Bukkit.getScheduler().runTaskTimer(plugin, Runnable {
+            for (slotIndex in this.animatedSlots) {
+                val slot = this.slots[slotIndex] ?: continue
                 val frame = slot.animation?.nextFrame() ?: continue
-                for (viewerUuid in viewers) {
-                    inventories[viewerUuid]?.setItem(slotIndex, frame.item)
+                for (viewerUuid in this.viewers) {
+                    this.inventories[viewerUuid]?.setItem(slotIndex, frame.item)
                 }
             }
         }, 0L, interval)
     }
 
     private fun stopAnimation() {
-        animationTask?.cancel()
-        animationTask = null
+        this.animationTask?.cancel()
+        this.animationTask = null
     }
 }

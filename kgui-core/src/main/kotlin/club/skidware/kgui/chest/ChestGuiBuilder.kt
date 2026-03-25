@@ -53,7 +53,7 @@ class ChestGuiBuilder(
      * @param block DSL configuration for the slot
      */
     fun slot(index: Int, block: SlotBuilder.() -> Unit) {
-        slotBuilders[index] = SlotBuilder(index).apply(block)
+        this.slotBuilders[index] = SlotBuilder(index).apply(block)
     }
 
     /**
@@ -65,7 +65,7 @@ class ChestGuiBuilder(
      * @param block DSL configuration receiving the current slot index
      */
     fun slots(indices: IntRange, block: SlotBuilder.(Int) -> Unit) {
-        indices.forEach { i -> slotBuilders[i] = SlotBuilder(i).apply { block(i) } }
+        indices.forEach { i -> this.slotBuilders[i] = SlotBuilder(i).apply { block(i) } }
     }
 
     /**
@@ -75,7 +75,7 @@ class ChestGuiBuilder(
      * @param block DSL configuration receiving the current slot index
      */
     fun slots(indices: List<Int>, block: SlotBuilder.(Int) -> Unit) {
-        indices.forEach { i -> slotBuilders[i] = SlotBuilder(i).apply { block(i) } }
+        indices.forEach { i -> this.slotBuilders[i] = SlotBuilder(i).apply { block(i) } }
     }
 
     /**
@@ -88,10 +88,10 @@ class ChestGuiBuilder(
      */
     fun border(material: Material, block: ItemBuilder.() -> Unit = {}) {
         val item = ItemBuilder(material).apply(block).build()
-        for (i in 0 until rows * 9) {
+        for (i in 0 until this.rows * 9) {
             val row = i / 9; val col = i % 9
-            if (row == 0 || row == rows - 1 || col == 0 || col == 8) {
-                slotBuilders.putIfAbsent(i, SlotBuilder(i).apply { item(item) })
+            if (row == 0 || row == this.rows - 1 || col == 0 || col == 8) {
+                this.slotBuilders.putIfAbsent(i, SlotBuilder(i).apply { item(item) })
             }
         }
     }
@@ -107,7 +107,7 @@ class ChestGuiBuilder(
     fun fill(material: Material, block: ItemBuilder.() -> Unit = {}) {
         val item = ItemBuilder(material).apply(block).build()
         for (i in 0 until rows * 9) {
-            slotBuilders.putIfAbsent(i, SlotBuilder(i).apply { item(item) })
+            this.slotBuilders.putIfAbsent(i, SlotBuilder(i).apply { item(item) })
         }
     }
 
@@ -118,7 +118,7 @@ class ChestGuiBuilder(
      * @see PatternBuilder
      */
     fun pattern(block: PatternBuilder.() -> Unit) {
-        patternSlots = PatternBuilder().apply(block).buildSlots()
+        this.patternSlots = PatternBuilder().apply(block).buildSlots()
     }
 
     /** Allows players to move items within the inventory when set to `true`. */
@@ -134,13 +134,13 @@ class ChestGuiBuilder(
     fun onClick(handler: (Player, Int, ClickType) -> Unit) { this.onClick = handler }
 
     internal fun build(): ChestGui {
-        val gui = ChestGui(plugin, MiniMessage.miniMessage().deserialize(title), rows)
-        gui.interactable = interactable
-        gui.onOpenHandler = onOpen
-        gui.onCloseHandler = onClose
-        gui.onClickHandler = onClick
-        slotBuilders.values.forEach { gui.setSlot(it.build()) }
-        patternSlots.values.forEach { gui.setSlot(it) }
+        val gui = ChestGui(this.plugin, MiniMessage.miniMessage().deserialize(this.title), this.rows)
+        gui.interactable = this.interactable
+        gui.onOpenHandler = this.onOpen
+        gui.onCloseHandler = this.onClose
+        gui.onClickHandler = this.onClick
+        this.slotBuilders.values.forEach { gui.setSlot(it.build()) }
+       this. patternSlots.values.forEach { gui.setSlot(it) }
         return gui
     }
 }

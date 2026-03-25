@@ -52,10 +52,10 @@ class AnvilGui(
         Bukkit.createInventory(this, InventoryType.ANVIL, title)
 
     override fun renderFor(player: Player, inventory: Inventory) {
-        val input = inputItem.clone()
-        if (defaultText.isNotEmpty()) {
+        val input = this.inputItem.clone()
+        if (this.defaultText.isNotEmpty()) {
             val meta = input.itemMeta
-            meta?.displayName(Component.text(defaultText))
+            meta?.displayName(Component.text(this.defaultText))
             input.itemMeta = meta
         }
         inventory.setItem(0, input)
