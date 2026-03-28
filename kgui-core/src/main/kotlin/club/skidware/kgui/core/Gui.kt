@@ -62,7 +62,7 @@ interface Gui {
      *
      * @return an immutable snapshot of current viewers
      */
-    fun getViewers(): Set<Player>
+    fun getGuiViewers(): Set<Player>
 
     /**
      * Retrieves (or creates) the Bukkit inventory associated with a player.

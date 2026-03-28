@@ -30,7 +30,7 @@ direction(ScrollableGui.Direction.HORIZONTAL)  // Scrolls by columns
 ```
 
 - **Vertical**: Each scroll step moves by `columns` items (default 7)
-- **Horizontal**: Each scroll step moves by 1 item
+  - **Horizontal**: Each scroll step moves by 1 item
 
 ## Builder Methods
 

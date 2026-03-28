@@ -134,7 +134,7 @@ abstract class BaseGui(
     }
 
     /** @return an immutable snapshot of all online players currently viewing this GUI */
-    override fun getViewers(): Set<Player> =
+    override fun getGuiViewers(): Set<Player> =
         this.viewers.mapNotNull { Bukkit.getPlayer(it) }.toSet()
 
     /**
